@@ -22,7 +22,6 @@ namespace NotesAPI.Controllers
             return Ok(await notesDbContext.Notes.ToListAsync());
         }
 
-
         [HttpGet]
         [Route("{id:Guid}")]
         [ActionName("GetNoteById")]
@@ -54,7 +53,7 @@ namespace NotesAPI.Controllers
         {
             var existingNote = await notesDbContext.Notes.FindAsync(id);
 
-            if(existingNote == null)
+            if (existingNote == null)
             {
                 return NotFound();
             }
@@ -65,7 +64,25 @@ namespace NotesAPI.Controllers
 
             await notesDbContext.SaveChangesAsync();
 
+            return Ok(existingNote);
+
         }
 
+        [HttpDelete]
+        [Route("{id:Guid}")]
+        public async Task<IActionResult> DeleteNote([FromRoute] Guid id)
+        {
+            var existingNote = await notesDbContext.Notes.FindAsync(id);
+
+            if(existingNote == null)
+            {
+                return NotFound();
+            }
+
+            notesDbContext.Notes.Remove(existingNote);
+            await notesDbContext.SaveChangesAsync();
+
+            return Ok();
+        }
     }
 }
